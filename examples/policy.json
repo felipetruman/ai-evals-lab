@@ -1,0 +1,28 @@
+{
+  "workflow_id": "refund_review_v1",
+  "nodes": [
+    {
+      "id": "fetch_order",
+      "tool": "orders.get",
+      "required": true,
+      "params": {"order_id": {"type": "string", "required": true}}
+    },
+    {
+      "id": "verify_identity",
+      "tool": "identity.verify",
+      "required": true,
+      "depends_on": ["fetch_order"],
+      "params": {"customer_id": {"type": "string", "required": true}}
+    },
+    {
+      "id": "issue_refund",
+      "tool": "refunds.create",
+      "required": true,
+      "depends_on": ["verify_identity"],
+      "params": {
+        "order_id": {"type": "string", "required": true},
+        "amount": {"type": "number", "required": true}
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+name: Evals Regression Gate
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install package
+        run: python -m pip install -e .
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Valid trajectory must pass
+        run: python -m evals_lab.cli --policy examples/policy.json --trace examples/valid.json
+      - name: Invalid trajectories must fail
+        shell: bash
+        run: |
+          set +e
+          python -m evals_lab.cli --policy examples/policy.json --trace examples/missing_safety.json > /dev/null
+          a=$?
+          python -m evals_lab.cli --policy examples/policy.json --trace examples/hallucinated_parameter.json > /dev/null
+          b=$?
+          test "$a" -eq 2 && test "$b" -eq 2

@@ -1,0 +1,7 @@
+{
+  "calls": [
+    {"step_id": "fetch_order", "tool": "orders.get", "arguments": {"order_id": "ORDER-001"}},
+    {"step_id": "verify_identity", "tool": "identity.verify", "arguments": {"customer_id": "CUSTOMER-001"}},
+    {"step_id": "issue_refund", "tool": "refunds.create", "arguments": {"order_id": "ORDER-001", "amount": 25.0}}
+  ]
+}
