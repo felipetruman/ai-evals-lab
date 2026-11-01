@@ -1,0 +1,24 @@
+# Synthetic CI-only collector: no telemetry sent to external services.
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+processors:
+  batch:
+    timeout: 200ms
+exporters:
+  file:
+    path: /data/traces.json
+    format: json
+    flush_interval: 1s
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+service:
+  extensions: [health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [file]

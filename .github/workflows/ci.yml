@@ -16,7 +16,7 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
       - name: Install package
-        run: python -m pip install -e ".[otel]"
+        run: python -m pip install -e ".[collector]"
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Valid trajectory must pass
@@ -81,4 +81,28 @@ jobs:
             reports/sdk-drop_last/evaluation.json
             reports/sdk-exporter_failure/evaluation.json
             reports/sdk-sampler_off/evaluation.json
+          if-no-files-found: ignore
+      - name: Collector integration (official binary via Docker)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p reports/collector
+          chmod 0777 reports/collector
+          trap 'docker compose -f infra/otel/docker-compose.yml down --remove-orphans' EXIT
+          docker compose -f infra/otel/docker-compose.yml up -d
+          for i in {1..40}; do
+            if curl -fsS http://127.0.0.1:13133/ >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:13133/
+          python -m evals_lab.remote --endpoint http://127.0.0.1:4318/v1/traces \
+            --policy examples/policy.json \
+            --collector-file reports/collector/traces.json \
+            --output reports/remote-evaluation.json
+      - name: Upload collector-side synthetic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-collector-evidence
+          path: reports/remote-evaluation.json
           if-no-files-found: ignore
