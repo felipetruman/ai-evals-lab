@@ -63,7 +63,7 @@ jobs:
           python -m evals_lab.synthetic_cli generate \
             --policy examples/policy.json --seed-trace examples/valid.json \
             --seed 42 --count 24 --output reports/synthetic-candidates.jsonl
-      - name: Synthetic candidate contract: unique, labeled, pending review
+      - name: Synthetic candidate contract (unique labeled pending review)
         run: |
           python - <<'PYCAND'
           import json
