@@ -5,7 +5,7 @@ Every project is considered **done** only after runnable implementation, automat
 
 ## Phase 1: Evaluation foundations
 1. **Trajectory Grading Engine** — status: working prototype with labeled JSONL batch runner, OTLP/JSON tool span import, strict fail-closed DAG, per-step errors and negative fixtures. Added official Python OpenTelemetry SDK instrumentation, failure injection, sampling-off and export-ledger consistency tests in v0.4. Future: semantic checks, alternative valid paths, external provenance and independent completeness evidence.
-7. **Statistical Significance Engine** — paired bootstrap, confidence intervals, clear sample size and design, multiple-comparison awareness.
+7. **Statistical Significance Engine** — **implemented v0.6 prototype:** paired percentile bootstrap, exact McNemar test, seeded reproducibility, confidence intervals, samples/warnings; future: clustered sampling and multiple testing correction.
 12. **Synthetic Edge-Case Generator** — model-assisted generation plus human verification, deduplication, labels and dataset versioning.
 14. **Dataset Contamination Checker** — n-gram overlap, semantic search, threshold calibration, false-positive analysis.
 
