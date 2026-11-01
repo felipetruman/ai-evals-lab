@@ -116,7 +116,15 @@ def otlp_to_trajectory(document: dict[str, Any]) -> dict[str, Any]:
                     raise ValueError("invalid startTimeUnixNano") from exc
                 if timestamp <= 0:
                     raise ValueError("startTimeUnixNano must be positive")
-                tool_calls.append((timestamp, span_id.lower(), {"step_id": step, "tool": name, "arguments": arguments}))
+                call = {"step_id": step, "tool": name, "arguments": arguments}
+                status = span.get("status")
+                if status is not None:
+                    if not isinstance(status, dict) or status.get("code") not in (
+                        "STATUS_CODE_OK", "STATUS_CODE_ERROR", 1, 2,
+                    ):
+                        raise ValueError("tool span must have explicit OK or ERROR status")
+                    call["status"] = "error" if status["code"] in ("STATUS_CODE_ERROR", 2) else "ok"
+                tool_calls.append((timestamp, span_id.lower(), call))
     if len(trace_ids) != 1:
         raise ValueError("OTLP fixture must contain exactly one traceId")
     if not tool_calls:

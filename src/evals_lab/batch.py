@@ -7,6 +7,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
+from .attestation import verify_attestation
 from .engine import grade_trajectory, validate_policy
 from .otel import otlp_to_trajectory
 
@@ -63,6 +64,12 @@ def evaluate_dataset(policy: dict[str, Any], dataset: Path) -> BatchReport:
                 raise ValueError(f"line {line_number}: specify exactly one of trace or otlp")
             try:
                 trace = otlp_to_trajectory(row["otlp"]) if "otlp" in row else row["trace"]
+                if "attestation" in row:
+                    if "otlp" not in row:
+                        raise ValueError("attestation requires OTLP trace")
+                    evidence = verify_attestation(row["otlp"], row["attestation"])
+                    if not evidence.complete:
+                        raise ValueError("trace attestation failed: " + ", ".join(evidence.reasons))
                 grade = grade_trajectory(policy, trace)
             except (ValueError, TypeError) as exc:
                 raise ValueError(f"line {line_number} ({ident}): {exc}") from exc

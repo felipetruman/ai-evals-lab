@@ -14,6 +14,7 @@ keywords = ["llm", "evaluation", "agents", "trajectory", "safety"]
 [project.scripts]
 evals-lab = "evals_lab.cli:main"
 evals-lab-batch = "evals_lab.batch_cli:main"
+evals-lab-demo = "evals_lab.demo:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
