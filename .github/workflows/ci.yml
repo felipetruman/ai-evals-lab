@@ -30,3 +30,12 @@ jobs:
           python -m evals_lab.cli --policy examples/policy.json --trace examples/hallucinated_parameter.json > /dev/null
           b=$?
           test "$a" -eq 2 && test "$b" -eq 2
+      - name: Golden dataset batch regression gate
+        run: python -m evals_lab.batch_cli --policy examples/policy.json --dataset examples/golden.jsonl --min-agreement 1.0 --output reports/batch.json
+      - name: Upload evaluation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evals-report
+          path: reports/batch.json
+          if-no-files-found: ignore

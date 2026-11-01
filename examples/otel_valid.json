@@ -1,0 +1,114 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": []
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "ai-evals-lab.synthetic"
+          },
+          "spans": [
+            {
+              "traceId": "ffffffffffffffffffffffffffffffff",
+              "spanId": "0000000000000003",
+              "name": "execute_tool refunds.create",
+              "startTimeUnixNano": "1770000000002000000",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "execute_tool"
+                  }
+                },
+                {
+                  "key": "gen_ai.tool.name",
+                  "value": {
+                    "stringValue": "refunds.create"
+                  }
+                },
+                {
+                  "key": "evals.step_id",
+                  "value": {
+                    "stringValue": "issue_refund"
+                  }
+                },
+                {
+                  "key": "gen_ai.tool.call.arguments",
+                  "value": {
+                    "stringValue": "{\"order_id\":\"ORDER-001\",\"amount\":25}"
+                  }
+                }
+              ]
+            },
+            {
+              "traceId": "ffffffffffffffffffffffffffffffff",
+              "spanId": "0000000000000002",
+              "name": "execute_tool identity.verify",
+              "startTimeUnixNano": "1770000000001000000",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "execute_tool"
+                  }
+                },
+                {
+                  "key": "gen_ai.tool.name",
+                  "value": {
+                    "stringValue": "identity.verify"
+                  }
+                },
+                {
+                  "key": "evals.step_id",
+                  "value": {
+                    "stringValue": "verify_identity"
+                  }
+                },
+                {
+                  "key": "gen_ai.tool.call.arguments",
+                  "value": {
+                    "stringValue": "{\"customer_id\":\"CUSTOMER-001\"}"
+                  }
+                }
+              ]
+            },
+            {
+              "traceId": "ffffffffffffffffffffffffffffffff",
+              "spanId": "0000000000000001",
+              "name": "execute_tool orders.get",
+              "startTimeUnixNano": "1770000000000000000",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "execute_tool"
+                  }
+                },
+                {
+                  "key": "gen_ai.tool.name",
+                  "value": {
+                    "stringValue": "orders.get"
+                  }
+                },
+                {
+                  "key": "evals.step_id",
+                  "value": {
+                    "stringValue": "fetch_order"
+                  }
+                },
+                {
+                  "key": "gen_ai.tool.call.arguments",
+                  "value": {
+                    "stringValue": "{\"order_id\":\"ORDER-001\"}"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

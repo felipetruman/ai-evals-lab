@@ -13,6 +13,7 @@ keywords = ["llm", "evaluation", "agents", "trajectory", "safety"]
 
 [project.scripts]
 evals-lab = "evals_lab.cli:main"
+evals-lab-batch = "evals_lab.batch_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

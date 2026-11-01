@@ -4,7 +4,7 @@
 
 A reproducible evaluation engineering portfolio: **15 modules, one coherent methodology.**
 
-> Current status: **Project 01: Trajectory Grading Engine (working prototype).** Remaining 14 modules are planned, not implemented.
+> Current status: **Project 01: Trajectory Grading Engine (working prototype with batch and OTLP/JSON adapter).** Remaining 14 modules are planned, not implemented.
 
 ## Problem
 
@@ -81,3 +81,18 @@ See [docs/ROADMAP.md](docs/ROADMAP.md) for all 15 project modules, implementatio
 ## License
 
 MIT, see `LICENSE`.
+
+## Batch evaluation (labeled JSONL)
+
+Run the synthetic golden dataset with zero external inference:
+
+```bash
+python -m evals_lab.batch_cli --policy examples/policy.json --dataset examples/golden.jsonl --min-agreement 1 --output reports/batch.json
+# expected: cases_total=4, matched=4, agreement=1.0, exit 0
+```
+
+Each JSONL line needs unique `case_id`, boolean `expected_pass`, and exactly one of `trace` (native tool calls) or `otlp` (one OTLP trace). Reports contain only step-level outcomes, not raw tool arguments. A malformed fixture exits 1; an unexpected classification exits 2 by default. Agreement measures reproduction of **labels**, not model task success or statistical significance.
+
+**OTLP adapter:** offline `resourceSpans` with `gen_ai.operation.name=execute_tool`, standard `gen_ai.tool.name`, opt-in `gen_ai.tool.call.arguments` and custom `evals.step_id`. The latter is project-specific, **not** an OpenTelemetry standard. Spans sort by `startTimeUnixNano` and `spanId`, which do not establish actual causality. Missing spans cannot be detected with certainty.
+
+**Privacy:** OTLP tool arguments can contain secrets and personal data. Never publish unredacted production traces. The published fixtures are synthetic. Full methodology in [docs/BATCH-EVALS.md](docs/BATCH-EVALS.md).
