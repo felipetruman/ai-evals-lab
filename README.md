@@ -171,3 +171,24 @@ See [Collector runbook](docs/OTLP-COLLECTOR.md) for Docker setup, retry/failure 
 python -m pip install -e ".[collector]"
 python -m unittest discover -s tests -v
 ```
+
+
+## Project 07 — Statistical Significance Engine (v0.6)
+
+Compare two models using **paired binary task outcomes**: seeded paired-bootstrap
+percentile confidence intervals for the difference in success rates and an
+independent **exact McNemar two-sided p-value**. No LLM API calls or scientific
+claims based on fake model results.
+
+```bash
+python -m pip install -e '.[collector]'
+python -m evals_lab.significance_cli \
+  --dataset examples/synthetic-model-comparison.jsonl \
+  --model-a 'Model A' --model-b 'Model B' \
+  --resamples 5000 --seed 42 --output reports/significance.json
+```
+
+The **synthetic** 100-case fixture produces 65% success for A, 85% for B,
+with a +20.0 **percentage-point** difference. Only p-value and interval
+results reported by the CLI are inferential; they should not be generalized
+to real systems. See [full methodology](docs/STATISTICAL-SIGNIFICANCE.md).

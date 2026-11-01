@@ -30,6 +30,34 @@ jobs:
           python -m evals_lab.cli --policy examples/policy.json --trace examples/hallucinated_parameter.json > /dev/null
           b=$?
           test "$a" -eq 2 && test "$b" -eq 2
+      - name: Reproducible paired statistical analysis (synthetic fixture)
+        run: |
+          python -m evals_lab.significance_cli \
+            --dataset examples/synthetic-model-comparison.jsonl \
+            --model-a "Model A" --model-b "Model B" \
+            --resamples 5000 --seed 42 \
+            --output reports/significance.json
+      - name: Verify synthetic significance report contract
+        run: |
+          python - <<'PYREPORT'
+          import json
+          with open('reports/significance.json', encoding='utf-8') as handle:
+              report = json.load(handle)
+          assert report['sample_size'] == 100
+          assert report['success_a'] == 65 and report['success_b'] == 85
+          assert report['discordant_a_only'] == 5 and report['discordant_b_only'] == 25
+          assert report['delta_pp'] == 20.0
+          assert report['direction'] == 'B'
+          assert report['ci_low_pp'] > 0
+          assert report['p_value'] < 0.05
+          PYREPORT
+      - name: Upload synthetic statistical evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-significance-report
+          path: reports/significance.json
+          if-no-files-found: ignore
       - name: Golden dataset batch regression gate
         run: python -m evals_lab.batch_cli --policy examples/policy.json --dataset examples/golden.jsonl --min-agreement 1.0 --output reports/batch.json
       - name: Upload redacted evaluation evidence
