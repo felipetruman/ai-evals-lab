@@ -156,6 +156,8 @@ def grade_trajectory(policy: dict[str, Any], trajectory: dict[str, Any]) -> Grad
         observed.add(ident)
         check(tool == node["tool"], "TOOL_MISMATCH", ident, f"expected {node['tool']!r}, got {tool!r}")
         check(isinstance(args, dict), "INVALID_ARGUMENTS", ident, "arguments must be an object")
+        if "status" in call:
+            check(call["status"] == "ok", "TOOL_EXECUTION_FAILED", ident, "tool execution did not succeed")
 
         for dep in node.get("depends_on", []):
             check(dep in successful, "DEPENDENCY_NOT_SATISFIED", ident, f"dependency {dep!r} not previously completed successfully")

@@ -4,7 +4,7 @@
 
 A reproducible evaluation engineering portfolio: **15 modules, one coherent methodology.**
 
-> Current status: **Project 01: Trajectory Grading Engine (working prototype with batch and OTLP/JSON adapter).** Remaining 14 modules are planned, not implemented.
+> Current status: **Project 01: Trajectory Grading Engine (working prototype with batch, OTLP/JSON adapter and instrumented demo).** Remaining 14 modules are planned, not implemented.
 
 ## Problem
 
@@ -96,3 +96,27 @@ Each JSONL line needs unique `case_id`, boolean `expected_pass`, and exactly one
 **OTLP adapter:** offline `resourceSpans` with `gen_ai.operation.name=execute_tool`, standard `gen_ai.tool.name`, opt-in `gen_ai.tool.call.arguments` and custom `evals.step_id`. The latter is project-specific, **not** an OpenTelemetry standard. Spans sort by `startTimeUnixNano` and `spanId`, which do not establish actual causality. Missing spans cannot be detected with certainty.
 
 **Privacy:** OTLP tool arguments can contain secrets and personal data. Never publish unredacted production traces. The published fixtures are synthetic. Full methodology in [docs/BATCH-EVALS.md](docs/BATCH-EVALS.md).
+
+## Instrumented local demo + trace consistency checks (v0.3)
+
+The demo executes three **real in-memory Python tool functions** (order lookup,
+identity verification and refund with an in-memory balance update), capturing
+actual execution spans, explicit OK/ERROR status, and a per-run attestation.
+It is **not** a production refund, LLM call or third-party API integration.
+
+```bash
+python -m evals_lab.demo --policy examples/policy.json --output-dir reports/demo
+# exit 0, one in-memory refund, local export consistency OK, policy PASS
+python -m evals_lab.demo --policy examples/policy.json --output-dir reports/blocked --skip-identity
+# exit 2, ZERO refunds, policy FAIL, local export consistency still OK
+```
+
+Outputs: `otlp.json`, `attestation.json`, `evaluation.json` per execution.
+The attestation checks expected span IDs from the in-process invocation ledger,
+JSON SHA-256, finalization, zero reported dropped spans, and sampling disabled.
+**This is a self-reported consistency check, not a cryptographic signature or
+proof that uninstrumented production operations never happened.** See
+[docs/TRACE-COMPLETENESS.md](docs/TRACE-COMPLETENESS.md).
+
+Do not publish these files after switching the demo to real customers; tool
+arguments can contain personal data and API secrets.

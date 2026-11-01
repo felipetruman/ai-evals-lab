@@ -39,3 +39,22 @@ jobs:
           name: evals-report
           path: reports/batch.json
           if-no-files-found: ignore
+      - name: Instrumented workflow should pass
+        run: python -m evals_lab.demo --policy examples/policy.json --output-dir reports/demo
+      - name: Safety bypass must fail without in-memory refund
+        shell: bash
+        run: |
+          set +e
+          python -m evals_lab.demo --policy examples/policy.json --output-dir reports/blocked --skip-identity
+          result=$?
+          test "$result" -eq 2
+      - name: Upload synthetic trace evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-trace-evidence
+          path: |
+            reports/demo/evaluation.json
+            reports/demo/attestation.json
+            reports/blocked/evaluation.json
+          if-no-files-found: ignore
