@@ -115,7 +115,8 @@ class SdkRun:
     effects: dict[str, Any]
 
 
-def execute_sdk_demo(fault: str = "none", skip_identity: bool = False) -> SdkRun:
+def execute_sdk_demo(fault: str = "none", skip_identity: bool = False,
+                     additional_exporter: SpanExporter | None = None) -> SdkRun:
     """Execute three real local tool functions under SDK-managed trace spans.
 
     The boundary ledger is populated *before* tool invocation. This makes a
@@ -133,6 +134,11 @@ def execute_sdk_demo(fault: str = "none", skip_identity: bool = False) -> SdkRun
         exporter, max_queue_size=128, max_export_batch_size=32,
         schedule_delay_millis=60_000, export_timeout_millis=5_000,
     ))
+    if additional_exporter is not None:
+        provider.add_span_processor(BatchSpanProcessor(
+            additional_exporter, max_queue_size=128, max_export_batch_size=32,
+            schedule_delay_millis=60_000, export_timeout_millis=5_000,
+        ))
     tracer = provider.get_tracer("ai-evals-lab.sdk")  # private provider: never alters global OTel state
     service = LocalRefundService()
     attempts: list[str] = []

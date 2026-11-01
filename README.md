@@ -160,3 +160,14 @@ ledger, the explicit sampler mode and a SHA-256 export checksum. This
 attestation is not a digital signature or trusted external audit.
 
 [Read the v0.4 methodology and limitations](docs/OTEL-SDK-RELIABILITY.md).
+
+## v0.5: Collector-side OTLP delivery verification
+
+Send synthetic SDK spans to the official OpenTelemetry Collector via OTLP/HTTP protobuf, then verify **collector-persisted** span IDs against the original in-process ledger. A successful HTTP request without a persisted receipt fails closed. **This is not a production attestation.**
+
+See [Collector runbook](docs/OTLP-COLLECTOR.md) for Docker setup, retry/failure test matrix and limitations.
+
+```bash
+python -m pip install -e ".[collector]"
+python -m unittest discover -s tests -v
+```
