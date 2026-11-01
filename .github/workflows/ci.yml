@@ -16,7 +16,7 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
       - name: Install package
-        run: python -m pip install -e .
+        run: python -m pip install -e ".[otel]"
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Valid trajectory must pass
@@ -32,7 +32,7 @@ jobs:
           test "$a" -eq 2 && test "$b" -eq 2
       - name: Golden dataset batch regression gate
         run: python -m evals_lab.batch_cli --policy examples/policy.json --dataset examples/golden.jsonl --min-agreement 1.0 --output reports/batch.json
-      - name: Upload evaluation evidence
+      - name: Upload redacted evaluation evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -57,4 +57,28 @@ jobs:
             reports/demo/evaluation.json
             reports/demo/attestation.json
             reports/blocked/evaluation.json
+          if-no-files-found: ignore
+      - name: OpenTelemetry SDK complete workflow
+        run: python -m evals_lab.otel_sdk_demo --policy examples/policy.json --output-dir reports/sdk
+      - name: SDK injected export failures must be detected
+        shell: bash
+        run: |
+          for fault in drop_last exporter_failure sampler_off; do
+            set +e
+            python -m evals_lab.otel_sdk_demo --fault "$fault" --policy examples/policy.json --output-dir "reports/sdk-$fault"
+            result=$?
+            set -e
+            test "$result" -eq 2 || exit 1
+          done
+      - name: Upload SDK evaluation evidence (synthetic only)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-sdk-evidence
+          path: |
+            reports/sdk/evaluation.json
+            reports/sdk/attestation.json
+            reports/sdk-drop_last/evaluation.json
+            reports/sdk-exporter_failure/evaluation.json
+            reports/sdk-sampler_off/evaluation.json
           if-no-files-found: ignore
