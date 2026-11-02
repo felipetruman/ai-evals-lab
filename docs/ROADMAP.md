@@ -7,7 +7,7 @@ Every project is considered **done** only after runnable implementation, automat
 1. **Trajectory Grading Engine** — status: working prototype with labeled JSONL batch runner, OTLP/JSON tool span import, strict fail-closed DAG, per-step errors and negative fixtures. Added official Python OpenTelemetry SDK instrumentation, failure injection, sampling-off and export-ledger consistency tests in v0.4. Future: semantic checks, alternative valid paths, external provenance and independent completeness evidence.
 7. **Statistical Significance Engine** — **implemented v0.6 prototype:** paired percentile bootstrap, exact McNemar test, seeded reproducibility, confidence intervals, samples/warnings; future: clustered sampling and multiple testing correction.
 12. **Synthetic Edge-Case Generator** — **implemented v0.7 prototype:** deterministic structural mutations with seeded reproduction, optional opt-in OpenAI-compatible generation, per-case SHA-256 fingerprints, candidate review gate, separate curated JSONL; future: independently labeled semantic/OOD tests and measured coverage.
-14. **Dataset Contamination Checker** — n-gram overlap, semantic search, threshold calibration, false-positive analysis.
+14. **Dataset Contamination Checker** — **implemented v0.8 prototype:** normalized exact matches, token n-grams, containment, supplied-embedding cosine similarity, synthetically labeled precision/recall and CI gate. Future: calibration on real labeled data, scalable indexing.
 
 ## Phase 2: Reliability and security
 5. **RAG Adversarial Harness** — contradictory evidence, missing citations, unanswerability metrics, citation faithfulness.
@@ -33,4 +33,4 @@ Every project is considered **done** only after runnable implementation, automat
 - **Quantified results:** only measured counts, confidence intervals and run metadata.
 
 ## Next milestone
-Project 14 contamination checking and independently validated held-out evaluation data; no real production traces or user data by default.
+Project 5 RAG adversarial harness with independently labeled grounding tests; no production customer data by default.

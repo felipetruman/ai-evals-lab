@@ -4,7 +4,7 @@
 
 A reproducible evaluation engineering portfolio: **15 modules, one coherent methodology.**
 
-> Current status: **Project 01: Trajectory Grading Engine (working prototype with batch, OTLP/JSON adapter and instrumented demo).** Remaining 14 modules are planned, not implemented.
+> Current status: **4/15 portfolio modules implemented as prototypes:** #1 Trajectory Grading, #7 Statistical Significance, #12 Synthetic Edge Cases, #14 Dataset Contamination.
 
 ## Problem
 
@@ -68,7 +68,7 @@ All three steps are required. The refund action must have a valid identity verif
 
 ## Portfolio-ready evidence
 
-1. Reproducible test commands + 66 automated tests (v0.4).
+1. Reproducible automated tests and CI (check current GitHub Actions for the latest count).
 2. Both positive and adversarial fixture traces.
 3. Machine-readable evaluation reports.
 4. CI that fails when expected negative scenarios accidentally pass.
@@ -204,3 +204,23 @@ python -m evals_lab.synthetic_cli generate \
 ```
 
 These mutations include missing safety steps, wrong tool names, bad argument types, unusual type-valid values, duplicate calls, and dependency/order faults. Each candidate is trace-hashed, labeled provisionally against the policy DAG, deduplicated and **never automatically added to the golden dataset**. Optional model generation requires `--source llm --allow-network` and an explicitly chosen OpenAI-compatible endpoint. Tests mock the network; no real inference is performed in CI. See [methodology, limitations and human review procedure](docs/SYNTHETIC-EDGE-CASES.md).
+
+## Dataset Contamination Checker (Project 14, v0.8)
+
+An offline train-vs-evaluation checker for exact normalized matches, token n-gram overlap, containment and cosine similarity on supplied embeddings. No model inference or network access is required.
+
+~~~bash
+python -m evals_lab.contamination_cli \
+  --train examples/contamination-train.jsonl \
+  --eval examples/contamination-eval-clean.jsonl \
+  --output reports/contamination-clean.json
+# exit 0
+
+python -m evals_lab.contamination_cli \
+  --train examples/contamination-train.jsonl \
+  --eval examples/contamination-eval-leaked.jsonl \
+  --output reports/contamination-leaked.json
+# exit 2
+~~~
+
+The published examples and vectors are synthetic. Semantic-only matches require manual review and corpus overlap is not proof of model training. See [methodology](docs/DATASET-CONTAMINATION.md).

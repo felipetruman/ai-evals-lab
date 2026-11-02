@@ -1,0 +1,15 @@
+{"train_id":"train-01","eval_id":"eval-clean-01","contaminated":false,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-01","eval_id":"eval-clean-02","contaminated":false,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-01","eval_id":"eval-leak-exact","contaminated":true,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-01","eval_id":"eval-leak-containment","contaminated":true,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-01","eval_id":"eval-leak-semantic","contaminated":true,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-02","eval_id":"eval-clean-01","contaminated":false,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-02","eval_id":"eval-clean-02","contaminated":false,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-02","eval_id":"eval-leak-exact","contaminated":false,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-02","eval_id":"eval-leak-containment","contaminated":false,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-02","eval_id":"eval-leak-semantic","contaminated":false,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-03","eval_id":"eval-clean-01","contaminated":false,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-03","eval_id":"eval-clean-02","contaminated":false,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-03","eval_id":"eval-leak-exact","contaminated":false,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-03","eval_id":"eval-leak-containment","contaminated":false,"reviewer":"synthetic-fixture-author"}
+{"train_id":"train-03","eval_id":"eval-leak-semantic","contaminated":false,"reviewer":"synthetic-fixture-author"}
