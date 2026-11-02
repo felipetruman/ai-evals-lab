@@ -58,6 +58,31 @@ jobs:
           name: synthetic-significance-report
           path: reports/significance.json
           if-no-files-found: ignore
+      - name: Generate unreviewed synthetic candidate dataset (no network)
+        run: |
+          python -m evals_lab.synthetic_cli generate \
+            --policy examples/policy.json --seed-trace examples/valid.json \
+            --seed 42 --count 24 --output reports/synthetic-candidates.jsonl
+      - name: Synthetic candidate contract (unique labeled pending review)
+        run: |
+          python - <<'PYCAND'
+          import json
+          from pathlib import Path
+          from evals_lab.synthetic import validate_candidates
+          policy = json.loads(Path('examples/policy.json').read_text())
+          rows = [json.loads(l) for l in Path('reports/synthetic-candidates.jsonl').read_text().splitlines()]
+          validate_candidates(policy, rows)
+          assert len(rows) == 24
+          assert {r['expected_pass'] for r in rows} == {False, True}
+          assert all(r['review_status'] == 'pending' for r in rows)
+          PYCAND
+      - name: Upload pending synthetic candidates (synthetic data only)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-edge-case-candidates
+          path: reports/synthetic-candidates.jsonl
+          if-no-files-found: ignore
       - name: Golden dataset batch regression gate
         run: python -m evals_lab.batch_cli --policy examples/policy.json --dataset examples/golden.jsonl --min-agreement 1.0 --output reports/batch.json
       - name: Upload redacted evaluation evidence

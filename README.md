@@ -192,3 +192,15 @@ The **synthetic** 100-case fixture produces 65% success for A, 85% for B,
 with a +20.0 **percentage-point** difference. Only p-value and interval
 results reported by the CLI are inferential; they should not be generalized
 to real systems. See [full methodology](docs/STATISTICAL-SIGNIFICANCE.md).
+
+## Synthetic edge-case generation (Project 12, v0.7)
+
+Generate 24 **pending human review** candidates offline (no LLM credits required):
+
+```bash
+python -m evals_lab.synthetic_cli generate \
+  --policy examples/policy.json --seed-trace examples/valid.json \
+  --count 24 --seed 42 --output reports/synthetic-candidates.jsonl
+```
+
+These mutations include missing safety steps, wrong tool names, bad argument types, unusual type-valid values, duplicate calls, and dependency/order faults. Each candidate is trace-hashed, labeled provisionally against the policy DAG, deduplicated and **never automatically added to the golden dataset**. Optional model generation requires `--source llm --allow-network` and an explicitly chosen OpenAI-compatible endpoint. Tests mock the network; no real inference is performed in CI. See [methodology, limitations and human review procedure](docs/SYNTHETIC-EDGE-CASES.md).
