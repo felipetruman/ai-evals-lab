@@ -241,3 +241,29 @@ jobs:
             reports/redteam-seeds.json
             reports/redteam-campaign.json
           if-no-files-found: ignore
+
+      - name: Context eviction deterministic comparison (12 synthetic cases)
+        run: |
+          python -m evals_lab.context_cli \
+            --dataset examples/context-eviction.jsonl \
+            --output reports/context-eviction.json
+      - name: Verify context benchmark regression metrics
+        run: |
+          python - <<'PYCTX'
+          import json
+          r=json.load(open('reports/context-eviction.json',encoding='utf-8'))
+          assert r['cases_total']==12 and len(r['results'])==36
+          s={x['strategy']:x for x in r['summaries']}
+          assert set(s)=={'recency','priority','structured_summary'}
+          assert s['recency']['correct']==5
+          assert s['priority']['correct']==5
+          assert s['structured_summary']['correct']==10
+          assert all(x['selected_tokens']<=x['budget_tokens'] for x in r['results'])
+          PYCTX
+      - name: Upload synthetic context eviction results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-context-window-evidence
+          path: reports/context-eviction.json
+          if-no-files-found: ignore
