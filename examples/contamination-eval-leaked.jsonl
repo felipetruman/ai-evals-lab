@@ -1,0 +1,3 @@
+{"id":"eval-leak-exact","text":"AGENT MUST VERIFY CUSTOMER IDENTITY BEFORE PROCESSING ANY REFUND REQUEST.","embedding":[1,0,0,0]}
+{"id":"eval-leak-containment","text":"Identity check: Agent must verify customer identity before processing any refund request. Then confirm the account and write an audit record.","embedding":[0.8,0.1,0.1,0.1]}
+{"id":"eval-leak-semantic","text":"Customer confirmation is mandatory prior to issuing a financial reversal.","embedding":[0.999,0.01,0.01,0.01]}

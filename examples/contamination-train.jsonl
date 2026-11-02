@@ -1,0 +1,3 @@
+{"id":"train-01","text":"Agent must verify customer identity before processing any refund request.","embedding":[1,0,0,0]}
+{"id":"train-02","text":"The warehouse temperature logger samples sensors every fifteen minutes.","embedding":[0,1,0,0]}
+{"id":"train-03","text":"A retry budget constrains outbound API calls during transient service outages.","embedding":[0,0,1,0]}
