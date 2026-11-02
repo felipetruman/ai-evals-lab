@@ -83,13 +83,13 @@ jobs:
           name: synthetic-edge-case-candidates
           path: reports/synthetic-candidates.jsonl
           if-no-files-found: ignore
-      - name: Clean corpus contamination gate
+      - name: Clean train/eval corpus must pass contamination gate
         run: |
           python -m evals_lab.contamination_cli \
             --train examples/contamination-train.jsonl \
             --eval examples/contamination-eval-clean.jsonl \
             --output reports/contamination-clean.json
-      - name: Synthetic contamination must fail closed
+      - name: Deliberately leaked corpus must be rejected
         shell: bash
         run: |
           set +e
@@ -98,14 +98,14 @@ jobs:
             --eval examples/contamination-eval-leaked.jsonl \
             --output reports/contamination-leaked.json
           code=$?
-          test "$code" -eq 2 || exit 1
-          python - <<'PYTEST'
+          test "$code" -eq 2
+          python - <<'PYCHECK'
           import json
-          data=json.load(open('reports/contamination-leaked.json'))
-          assert data['flagged_eval_count']==3
-          assert data['high_severity_pairs']>=2
-          assert data['semantic_available'] is True
-          PYTEST
+          report=json.load(open('reports/contamination-leaked.json'))
+          assert report['flagged_eval_count'] == 3
+          assert report['high_severity_pairs'] >= 2
+          assert report['semantic_available'] is True
+          PYCHECK
       - name: Upload synthetic contamination evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -190,4 +190,27 @@ jobs:
         with:
           name: synthetic-collector-evidence
           path: reports/remote-evaluation.json
+          if-no-files-found: ignore
+      - name: RAG adversarial synthetic regression gate
+        run: |
+          python -m evals_lab.rag_cli \
+            --dataset examples/rag-adversarial.jsonl \
+            --min-agreement 1.0 \
+            --output reports/rag-adversarial.json
+      - name: Verify expected adversarial RAG outcomes
+        run: |
+          python - <<'PYRAG'
+          import json
+          with open('reports/rag-adversarial.json', encoding='utf-8') as f:
+              r = json.load(f)
+          assert r['cases_total'] == 14 and r['matched'] == 14
+          assert r['passed'] == 5 and r['failed'] == 9
+          assert r['abstention_required'] == 6 and r['correct_abstentions'] == 3
+          PYRAG
+      - name: Upload synthetic RAG evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-rag-evidence
+          path: reports/rag-adversarial.json
           if-no-files-found: ignore

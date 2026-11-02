@@ -4,7 +4,7 @@
 
 A reproducible evaluation engineering portfolio: **15 modules, one coherent methodology.**
 
-> Current status: **4/15 portfolio modules implemented as prototypes:** #1 Trajectory Grading, #7 Statistical Significance, #12 Synthetic Edge Cases, #14 Dataset Contamination.
+> Current status: **4/15 portfolio modules implemented as prototypes:** #1 Trajectory Grading, #7 Statistical Significance, #12 Synthetic Edge Cases, #14 Dataset Contamination. Other modules remain planned.
 
 ## Problem
 
@@ -68,7 +68,7 @@ All three steps are required. The refund action must have a valid identity verif
 
 ## Portfolio-ready evidence
 
-1. Reproducible automated tests and CI (check current GitHub Actions for the latest count).
+1. Reproducible unit tests and CI (see latest GitHub Actions results for the count).
 2. Both positive and adversarial fixture traces.
 3. Machine-readable evaluation reports.
 4. CI that fails when expected negative scenarios accidentally pass.
@@ -207,20 +207,31 @@ These mutations include missing safety steps, wrong tool names, bad argument typ
 
 ## Dataset Contamination Checker (Project 14, v0.8)
 
-An offline train-vs-evaluation checker for exact normalized matches, token n-gram overlap, containment and cosine similarity on supplied embeddings. No model inference or network access is required.
+Compare **training vs held-out evaluation** JSONL locally for normalized exact overlap, token n-gram similarity/containment and optional precomputed embedding cosine similarity. Distinguish high-confidence lexical matches from semantic-only **review candidates**, with explicit threshold and manual-label diagnostics. The scanner never downloads embeddings or sends data to third-party services.
 
-~~~bash
+```bash
 python -m evals_lab.contamination_cli \
   --train examples/contamination-train.jsonl \
   --eval examples/contamination-eval-clean.jsonl \
   --output reports/contamination-clean.json
-# exit 0
+# Exit 0, no suspected overlap.
 
 python -m evals_lab.contamination_cli \
   --train examples/contamination-train.jsonl \
   --eval examples/contamination-eval-leaked.jsonl \
   --output reports/contamination-leaked.json
-# exit 2
-~~~
+# Exit 2, deliberately planted synthetic overlap detected.
+```
 
-The published examples and vectors are synthetic. Semantic-only matches require manual review and corpus overlap is not proof of model training. See [methodology](docs/DATASET-CONTAMINATION.md).
+Review methodology, limits and synthetic labeled-pair metrics in [docs/DATASET-CONTAMINATION.md](docs/DATASET-CONTAMINATION.md). Dataset overlap is **not proof that model training used the data**.
+
+## Project 05 — RAG Adversarial Harness (v0.9)
+
+Evaluate evidence-grounded answers, citations and abstention on 14 synthetic test cases:
+
+```bash
+python -m evals_lab.rag_cli --dataset examples/rag-adversarial.jsonl --output reports/rag-adversarial.json
+# expected: 14/14 labels matched; 5 valid outcomes, 9 correctly rejected
+```
+
+The offline evaluator uses **structured key/value evidence** rather than pretending to check arbitrary natural-language entailment. It detects contradictory sources, unsupported answers and false citations, requiring an explicit abstention when no consistent evidence supports the answer. No LLM or remote API is invoked. See [methodology and limitations](docs/RAG-ADVERSARIAL.md).
