@@ -10,7 +10,7 @@ Every project is considered **done** only after runnable implementation, automat
 14. **Dataset Contamination Checker** — **implemented v0.8 prototype:** normalized exact matches, token n-grams, containment, supplied-embedding cosine similarity, synthetically labeled precision/recall and CI gate. Future: calibration on real labeled data, scalable indexing.
 
 ## Phase 2: Reliability and security
-5. **RAG Adversarial Harness** — contradictory evidence, missing citations, unanswerability metrics, citation faithfulness.
+5. **RAG Adversarial Harness** — **v0.9 structured-fact prototype:** contradictory evidence, citation validation and abstention; future: human-labeled free-text entailment and retrieval coverage.
 8. **Agent Red-Team Fuzzer** — untrusted tool outputs, malformed calls, loop limits, no outbound destructive effects.
 13. **Context Window Eviction Tester** — long-context retrieval and compression, answer retention, noise tolerance.
 11. **Counterfactual Replay Debugger** — captured dependencies, deterministic stubs, substitution of one node, replay diff.

@@ -4,7 +4,7 @@
 
 A reproducible evaluation engineering portfolio: **15 modules, one coherent methodology.**
 
-> Current status: **4/15 portfolio modules implemented as prototypes:** #1 Trajectory Grading, #7 Statistical Significance, #12 Synthetic Edge Cases, #14 Dataset Contamination.
+> Current status: **5 of 15 modules have executable prototypes**: Trajectory Grading (01), RAG Adversarial (05), Statistical Significance (07), Synthetic Edge Cases (12), and Dataset Contamination (14). The remaining modules are planned; this is not a production service.
 
 ## Problem
 
@@ -224,3 +224,14 @@ python -m evals_lab.contamination_cli \
 ~~~
 
 The published examples and vectors are synthetic. Semantic-only matches require manual review and corpus overlap is not proof of model training. See [methodology](docs/DATASET-CONTAMINATION.md).
+
+## Project 05 — RAG Adversarial Harness (v0.9)
+
+Validate evidence-grounded answers, citation IDs and abstention on 14 synthetic cases:
+
+```bash
+python -m evals_lab.rag_cli --dataset examples/rag-adversarial.jsonl --output reports/rag-adversarial.json
+# Expected: 14/14 labels matched; 5 accepted, 9 correctly rejected.
+```
+
+The reference oracle uses **structured fact key/value documents** and cannot verify arbitrary natural-language entailment. No paid LLM calls or network access. See [methodology and limitations](docs/RAG-ADVERSARIAL.md).
