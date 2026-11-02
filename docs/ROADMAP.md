@@ -12,7 +12,7 @@ Every project is considered **done** only after runnable implementation, automat
 ## Phase 2: Reliability and security
 5. **RAG Adversarial Harness** — **v0.9 structured-fact prototype:** contradictory evidence, citation validation and abstention; future: human-labeled free-text entailment and retrieval coverage.
 8. **Agent Red-Team Fuzzer** — **v0.10 offline prototype:** seeded injection, malformed tools, loop budgets and privilege checks using in-memory synthetic tools, expected outcomes and CI gate; future: opted-in real model adapter with authenticated provenance.
-13. **Context Window Eviction Tester** — long-context retrieval and compression, answer retention, noise tolerance.
+13. **Context Window Eviction Tester** — **v0.11 deterministic prototype:** recency, externally assigned importance and structured key/value compaction; query recall, abstention and stale-answer measurement on synthetic cases. Future: real model tokenizer, semantic summarization and LLM-based retrieval under long context.
 11. **Counterfactual Replay Debugger** — captured dependencies, deterministic stubs, substitution of one node, replay diff.
 
 ## Phase 3: Continuous evaluation

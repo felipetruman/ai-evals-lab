@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ai-evals-lab"
-version = "0.10.0"
+version = "0.11.0"
 description = "Reproducible, open-source agent evaluation lab: deterministic trajectory grading"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -26,6 +26,7 @@ evals-lab-synthetic = "evals_lab.synthetic_cli:main"
 evals-lab-contamination = "evals_lab.contamination_cli:main"
 evals-lab-rag = "evals_lab.rag_cli:main"
 evals-lab-redteam = "evals_lab.redteam_cli:main"
+evals-lab-context = "evals_lab.context_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

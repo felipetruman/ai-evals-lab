@@ -247,3 +247,16 @@ python -m evals_lab.redteam_cli run --dataset reports/redteam-generated.jsonl --
 ```
 
 The checked-in fixture includes **16 distinct scenarios**; 40 generated cases reuse 16 patterns and are not independent samples. Both datasets have independently specified expected block codes and expected in-memory effects. Exit codes: 0 expected outcomes reproduced, 2 regression, 1 input error. [Security methodology and limitations](docs/AGENT-RED-TEAM.md).
+
+## Project 13 — Context Window Eviction Tester (v0.11)
+
+Compare three **offline** context retention policies on 12 synthetic cases: latest-first, externally assigned importance and deterministic structured fact compaction. Each policy uses the **same proxy-token budget** and the same facts. Reports track exact key/value recall, correct abstentions, stale answers, dropped item IDs and token utilization.
+
+```bash
+python -m evals_lab.context_cli \
+  --dataset examples/context-eviction.jsonl \
+  --output reports/context-eviction.json
+# Expected: 12 cases x 3 strategies; recency 5/12, priority 5/12, structured_summary 10/12.
+```
+
+These outcomes reflect only a controlled typed-memory simulator. **No actual LLM tokens, model calls, learned summaries or natural-language retrieval are measured.** Structured summaries are lossless key/value projections, not AI-generated compression. Priority metadata is provided externally, not inferred by the agent. Read [the methodology](docs/CONTEXT-EVICTION.md).
