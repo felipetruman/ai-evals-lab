@@ -214,3 +214,30 @@ jobs:
           name: synthetic-rag-evidence
           path: reports/rag-adversarial.json
           if-no-files-found: ignore
+
+      - name: Agent red-team checked-in fixture gate
+        run: python -m evals_lab.redteam_cli run --dataset examples/redteam-cases.jsonl --output reports/redteam-seeds.json
+      - name: Agent red-team seeded mutation campaign
+        run: |
+          python -m evals_lab.redteam_cli generate --count 40 --seed 42 --output reports/redteam-generated.jsonl
+          python -m evals_lab.redteam_cli run --dataset reports/redteam-generated.jsonl --output reports/redteam-campaign.json
+      - name: Verify red-team evidence
+        run: |
+          python - <<'PYRT'
+          import json
+          for name, expected in [('seeds',16), ('campaign',40)]:
+              report=json.load(open(f'reports/redteam-{name}.json',encoding='utf-8'))
+              assert report['total'] == expected
+              assert report['matched'] == expected and report['mismatched'] == 0
+              assert report['agreement'] == 1.0
+              assert len({r['attack_type'] for r in report['cases']}) == 5
+          PYRT
+      - name: Upload synthetic red-team evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-redteam-evidence
+          path: |
+            reports/redteam-seeds.json
+            reports/redteam-campaign.json
+          if-no-files-found: ignore

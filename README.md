@@ -235,3 +235,15 @@ python -m evals_lab.rag_cli --dataset examples/rag-adversarial.jsonl --output re
 ```
 
 The reference oracle uses **structured fact key/value documents** and cannot verify arbitrary natural-language entailment. No paid LLM calls or network access. See [methodology and limitations](docs/RAG-ADVERSARIAL.md).
+
+## Project 08 — Agent Red-Team Fuzzer (v0.10)
+
+An **offline**, deterministic fuzzer for tool-boundary behavior. Synthetic cases exercise untrusted tool output, malformed API arguments, spoofed tool names, repeated calls and missing identity verification. No LLM inference, external network, shell or real financial effects.
+
+```bash
+python -m evals_lab.redteam_cli run --dataset examples/redteam-cases.jsonl --output reports/redteam-seeds.json
+python -m evals_lab.redteam_cli generate --count 40 --seed 42 --output reports/redteam-generated.jsonl
+python -m evals_lab.redteam_cli run --dataset reports/redteam-generated.jsonl --output reports/redteam-campaign.json
+```
+
+The checked-in fixture includes **16 distinct scenarios**; 40 generated cases reuse 16 patterns and are not independent samples. Both datasets have independently specified expected block codes and expected in-memory effects. Exit codes: 0 expected outcomes reproduced, 2 regression, 1 input error. [Security methodology and limitations](docs/AGENT-RED-TEAM.md).
